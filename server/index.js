@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import cors from 'cors'
+import airlineRoutes from './routes/airline.js'
 
 
 const app = express();
@@ -9,6 +10,7 @@ const app = express();
 app.use(bodyParser.json({limit:"30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit:"30mb", extended: true}))
 app.use(cors())
+app.use('/airlines', airlineRoutes)
 
 
 const CONNECTION_URL = 'mongodb+srv://Vishwas-review:vishwasnkatte@cluster0.xwtfz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
