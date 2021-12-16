@@ -9,7 +9,7 @@ const airlineSchema = mongoose.Schema({
           type: Schema.Types.ObjectId,
           ref: 'Review'
      }],
-     like:{type: Number,default:0}
+     likes:{type: [String],default:[]}
     
 },{ timestamps: true})
 

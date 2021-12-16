@@ -52,13 +52,21 @@ export const deleteAirlines = async (req, res) =>{
 
 export const likeAirline = async (req, res)=>{
   const {id} = req.params
-
-  if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Airline is not found')
+  const userId = req.userId
+   if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Airline is not found')
   try {
+     
      const  airline = await Airline.findById(id)
-     const updatedAirline = await Airline.findByIdAndUpdate(id, {like: airline.like + 1}, {new: true})
+     const isPresent = airline.likes.findIndex((id)=> id === String(userId))
+     if(isPresent === -1){
+       airline.likes.push(userId)
+     } else {
+       airline.likes = airline.likes.filter((id)=> id !== String(userId))
+     }
+     const updatedAirline = await Airline.findByIdAndUpdate(id, airline, {new: true})
      res.status(202).json({message:'Liked', airline: updatedAirline})
   } catch (error) {
-    res.status(409).jason({message: error.message})
+    console.log(error)
+    res.status(409).json({message: error.message})
   }
 }
