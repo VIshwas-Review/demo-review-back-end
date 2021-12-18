@@ -5,6 +5,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import airlineRoutes from './routes/airline.js'
 import userRoutes from './routes/user.js'
+import './service/cache/cache.js'
 
 
 const app = express();

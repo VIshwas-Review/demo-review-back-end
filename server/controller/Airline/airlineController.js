@@ -4,7 +4,7 @@ import Airline from "../../models/airline.js";
 
 export const showAirlines = async (req, res)=>{
     try {
-      const airlines = await Airline.find();
+      const airlines = await Airline.find().cache({key: 10});
       res.status(200).json({message: "Found", airlines: airlines});
     } catch (error){
       res.status(404).json({message: error.message});
