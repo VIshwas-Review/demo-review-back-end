@@ -34,6 +34,7 @@ export const signIn = async (req: Request, res: Response) => {
       {
         email: existingUser.email,
         userId: existingUser._id,
+        role: existingUser.role
       },
       secret as string,
       { expiresIn: "1d" }
@@ -84,6 +85,7 @@ export const signUp = async (req: Request, res: Response) => {
       {
         email: newUser.email,
         userId: newUser._id,
+        role: newUser.role,
       },
       secret,
       { expiresIn: "1d" }

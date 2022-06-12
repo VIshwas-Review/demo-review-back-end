@@ -6,14 +6,13 @@ import {
   deleteAirlines,
   likeAirline,
 } from "../controller/Airline/airlineController";
-import { auth } from "../middleware/auth";
 
 const router = express.Router();
 
 router.get("/", showAirlines);
-router.post("/", auth,postAirline);
-router.patch("/:id", auth, updateAirline);
-router.delete("/:id", auth, deleteAirlines);
-router.patch("/:id/likeAirline", auth, likeAirline);
+router.post("/", postAirline);
+router.patch("/:id", updateAirline);
+router.delete("/:id", deleteAirlines);
+router.patch("/:id/likeAirline", likeAirline);
 
 export default router;
