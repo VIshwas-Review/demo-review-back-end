@@ -1,4 +1,4 @@
-import User from "../../models/user.js";
+import User from "../../models/user";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -18,7 +18,10 @@ export const signIn = async (req, res) => {
     if (!existingUser)
       return res.status(404).json({ message: "Create account before signin" });
 
-    const isValidPassword = await validatePassword(password, existingUser.password);
+    const isValidPassword = await validatePassword(
+      password,
+      existingUser.password
+    );
 
     if (!isValidPassword)
       return res.status(400).json({ message: "Invalid credential" });
