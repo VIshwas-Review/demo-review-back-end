@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import Schema from 'mongoose'
 
-const airlineSchema = mongoose.Schema({
+const airlineSchema = new mongoose.Schema({
      title: String,
      imageUrl: String,
      owner: String,

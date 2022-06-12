@@ -7,10 +7,11 @@ import {
   likeAirline,
 } from "../controller/Airline/airlineController";
 import { auth } from "../middleware/auth";
-const router: typeof express.Router = express.Router();
+
+const router = express.Router();
 
 router.get("/", showAirlines);
-router.post("/", postAirline);
+router.post("/", auth,postAirline);
 router.patch("/:id", auth, updateAirline);
 router.delete("/:id", auth, deleteAirlines);
 router.patch("/:id/likeAirline", auth, likeAirline);

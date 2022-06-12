@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
+import type { Request, Response } from 'express'
+
 import Airline from "../../models/airline";
 
-export const showAirlines = async (req, res) => {
+export const showAirlines = async (req: Request, res: Response) => {
   try {
     const airlines = await Airline.find();
     res.status(200).json({ message: "Found", airlines: airlines });
-  } catch (error) {
+  } catch (error: any) {
     res.status(404).json({ message: error.message });
   }
 };
 
-export const postAirline = async (req, res) => {
+export const postAirline = async (req: Request, res: Response) => {
   const airline = req.body;
   const newAirline = new Airline(airline);
   try {
@@ -18,45 +20,45 @@ export const postAirline = async (req, res) => {
     res
       .status(201)
       .json({ message: "Added Successfully", airline: newAirline });
-  } catch (error) {
+  } catch (error: any) {
     res.status(409).json({ message: error.message });
   }
 };
 
-export const updateAirline = async (req, res) => {
+export const updateAirline = async (req: Request, res: Response) => {
   const id = req.params.id;
   const airline = req.body.airline;
   console.log(airline);
-  if (mongoose.Types.ObjectId.isValid(_id))
+  if (mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send("Airline is not found");
 
   try {
-    updatedAirline = await Airline.findByIdAndUpdate(_id, airline, {
+    const updatedAirline = await Airline.findByIdAndUpdate(id, airline, {
       new: true,
     });
     res
       .status(202)
       .json({ message: "Updated Succesfully", airline: updatedAirline });
-  } catch (error) {
-    res.status(409).jason({ message: error.message });
+  } catch (error: any) {
+    res.status(409).json({ message: error.message });
   }
 };
 
-export const deleteAirlines = async (req, res) => {
+export const deleteAirlines = async (req: Request, res: Response) => {
   const id = req.params.id;
-  if (mongoose.Types.ObjectId.isValid(_id))
+  if (mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send("Airline is not found");
 
   try {
-    deletedAirline = await Airline.findByIdAndRemove(_id);
+    const deletedAirline = await Airline.findByIdAndRemove(_id);
 
     res.status(203).json({ message: "Deleted Successfully" });
-  } catch (error) {
-    res.status(411).jason({ message: error.message });
+  } catch (error: any) {
+    res.status(411).json({ message: error.message });
   }
 };
 
-export const likeAirline = async (req, res) => {
+export const likeAirline = async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = req.userId;
   if (!mongoose.Types.ObjectId.isValid(id))
@@ -73,7 +75,7 @@ export const likeAirline = async (req, res) => {
       new: true,
     });
     res.status(202).json({ message: "Liked", airline: updatedAirline });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(409).json({ message: error.message });
   }

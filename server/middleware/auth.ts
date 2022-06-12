@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import type { Request, Response, NextFunction } from 'express'
 
-export const auth = async (req, res, next) => {
+export const auth = async (req: Request,   res: Response, next: NextFunction) => {
   try {
     const accessToken = req.headers.authorization?.split(" ")[1];
     if (!accessToken) {
@@ -12,7 +13,7 @@ export const auth = async (req, res, next) => {
       let decodedData;
 
       if (accessToken && isCustomAuth) {
-        decodedData = jwt.verify(accessToken, process.env.JWT_SECRET);
+        decodedData = jwt.verify(accessToken, process.env.JWT_SECRET as string);
         req.userId = decodedData?.userId;
 
         if (decodedData?.exp < Date.now().valueOf() / 1000)
@@ -26,7 +27,7 @@ export const auth = async (req, res, next) => {
       }
       next();
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error.message);
   }
 };
