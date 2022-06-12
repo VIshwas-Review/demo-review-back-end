@@ -50,8 +50,7 @@ export const deleteAirlines = async (req: Request, res: Response) => {
     return res.status(404).send("Airline is not found");
 
   try {
-    const deletedAirline = await Airline.findByIdAndRemove(_id);
-
+    await Airline.findByIdAndRemove(id);
     res.status(203).json({ message: "Deleted Successfully" });
   } catch (error: any) {
     res.status(411).json({ message: error.message });
@@ -60,16 +59,16 @@ export const deleteAirlines = async (req: Request, res: Response) => {
 
 export const likeAirline = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = req.userId;
+  const userId = req.params.userId;
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send("Airline is not found");
   try {
     const airline = await Airline.findById(id);
-    const isPresent = airline.likes.findIndex((id) => id === String(userId));
+    const isPresent = airline.likes.findIndex((id:string) => id === String(userId));
     if (isPresent === -1) {
       airline.likes.push(userId);
     } else {
-      airline.likes = airline.likes.filter((id) => id !== String(userId));
+      airline.likes = airline.likes.filter((id:string) => id !== String(userId));
     }
     const updatedAirline = await Airline.findByIdAndUpdate(id, airline, {
       new: true,

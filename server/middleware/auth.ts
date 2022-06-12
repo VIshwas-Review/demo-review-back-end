@@ -10,11 +10,11 @@ export const auth = async (req: Request,   res: Response, next: NextFunction) =>
       });
     } else {
       const isCustomAuth = accessToken.length < 500;
-      let decodedData;
+      let decodedData:any;
 
       if (accessToken && isCustomAuth) {
         decodedData = jwt.verify(accessToken, process.env.JWT_SECRET as string);
-        req.userId = decodedData?.userId;
+        req.params.userId = decodedData?.userId;
 
         if (decodedData?.exp < Date.now().valueOf() / 1000)
           return res.status(401).json({
@@ -23,7 +23,7 @@ export const auth = async (req: Request,   res: Response, next: NextFunction) =>
       } else {
         decodedData = jwt.decode(accessToken);
 
-        req.userId = decodedData?.sub;
+        req.params.userId = decodedData?.sub;
       }
       next();
     }
