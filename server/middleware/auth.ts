@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from 'express'
 
 export const auth = async (req: Request,   res: Response, next: NextFunction) => {
   try {
-    const accessToken = req.headers.authorization?.split(" ")[1];
+    const accessToken = req.headers.authorization?.split(" ")[0];
     if (!accessToken) {
       return res.status(401).json({
         error: "Login or Signup to Continue",

@@ -1,8 +1,11 @@
 import bcrypt from "bcryptjs";
+import {config } from 'dotenv';
 import jwt from "jsonwebtoken";
 import type { Request, Response } from 'express'
 
 import User from "../../models/user";
+
+config()
 
 const secret = process.env.JWT_SECRET as string
 
