@@ -1,27 +1,42 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from "express";
 
-import type { MiddlewareCallBackFunction, Paths, UrlPath, Method } from '../types/api'
+import type {
+  MiddlewareCallBackFunction,
+  RouteInfo,
+  Method,
+} from "../types/api";
 
-function matchCurrentUrl(paths: Paths, urlPath: string, method: string): boolean {
-  const matchedUrl: UrlPath | undefined = paths.find((item) => item.url === urlPath)
+function matchCurrentUrl(
+  routesToExlcude: RouteInfo[],
+  urlPath: string,
+  method: string
+): boolean {
+  const matchedUrl: RouteInfo | undefined = routesToExlcude.find(
+    (item) => item.url === urlPath
+  );
 
   if (matchedUrl) {
-    return matchedUrl.methods ? matchedUrl.methods.includes(method.toUpperCase() as Method) : true
+    return matchedUrl.methods
+      ? matchedUrl.methods.includes(method.toUpperCase() as Method)
+      : true;
   }
 
-  return false
+  return false;
 }
 
 const authenticateUser =
-  (paths: Paths, middleware: MiddlewareCallBackFunction): MiddlewareCallBackFunction =>
+  (
+    routesToExlcude: RouteInfo[],
+    middleware: MiddlewareCallBackFunction
+  ): MiddlewareCallBackFunction =>
   (req: Request, res: Response, next: NextFunction) => {
-    const isMatched = matchCurrentUrl(paths, req.path, req.method)
+    const isMatched = matchCurrentUrl(routesToExlcude, req.path, req.method);
 
     if (isMatched) {
-      return next()
+      return next();
     }
 
-    middleware(req, res, next)
-  }
+    middleware(req, res, next);
+  };
 
-export default authenticateUser
+export default authenticateUser;
