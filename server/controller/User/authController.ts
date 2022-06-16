@@ -1,16 +1,23 @@
-import User from "../../models/user.js";
 import bcrypt from "bcryptjs";
+import {config } from 'dotenv';
 import jwt from "jsonwebtoken";
+import type { Request, Response } from 'express'
 
-async function hashPassword(password) {
+import User from "../../models/user";
+
+config()
+
+const secret = process.env.JWT_SECRET as string
+
+async function hashPassword(password: string) {
   return await bcrypt.hash(password, 10);
 }
 
-async function validatePassword(plainPassword, hashedPassword) {
+async function validatePassword(plainPassword: string, hashedPassword: string) {
   return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
-export const signIn = async (req, res) => {
+export const signIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -18,7 +25,10 @@ export const signIn = async (req, res) => {
     if (!existingUser)
       return res.status(404).json({ message: "Create account before signin" });
 
-    const isValidPassword = await validatePassword(password, existingUser.password);
+    const isValidPassword = await validatePassword(
+      password,
+      existingUser.password
+    );
 
     if (!isValidPassword)
       return res.status(400).json({ message: "Invalid credential" });
@@ -27,8 +37,9 @@ export const signIn = async (req, res) => {
       {
         email: existingUser.email,
         userId: existingUser._id,
+        role: existingUser.role
       },
-      process.env.JWT_SECRET,
+      secret as string,
       { expiresIn: "1d" }
     );
 
@@ -45,8 +56,8 @@ export const signIn = async (req, res) => {
   }
 };
 
-export const signUp = async (req, res) => {
-  const { email, password, confirmPassword, imageUrl, firstName, lastName } =
+export const signUp = async (req: Request, res: Response) => {
+  const { email, password, confirmPassword, imageUrl, firstName, lastName, role } =
     req.body;
   console.log(req.body);
   try {
@@ -69,7 +80,7 @@ export const signUp = async (req, res) => {
       email,
       password: hashedPassword,
       confirmPassword: hashedPassword,
-      role: "user",
+      role,
       imageUrl,
       name: `${firstName} ${lastName}`,
     });
@@ -77,8 +88,9 @@ export const signUp = async (req, res) => {
       {
         email: newUser.email,
         userId: newUser._id,
+        role: newUser.role,
       },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: "1d" }
     );
     console.log(newUser);
