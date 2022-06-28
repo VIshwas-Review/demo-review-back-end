@@ -23,6 +23,5 @@ export const PRIVATE_ROUTES: RouteInfo[] = [
   {
     url: "/airlines/:id/likeAirline",
     methods: ["PATCH"],
-    userRoles: ["admin", "owner"],
   },
 ];

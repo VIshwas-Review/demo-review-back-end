@@ -10,8 +10,7 @@ function matchCurrentUrl(
 ): {
   isMatched: boolean;
   userRoles?: UserRole[];
-  isPublic?: boolean;
-  isPrivate?: boolean;
+  isPublic: boolean;
 } {
   const matchedPublicUrl: RouteInfo | undefined = PUBLIC_ROUTES.find(
     ({ url, methods }) =>
@@ -34,14 +33,15 @@ function matchCurrentUrl(
     return {
       isMatched: !!matchedPrivateUrl,
       userRoles: matchedPrivateUrl.userRoles,
+      isPublic: false,
     };
   }
 
-  return { isMatched: false };
+  return { isMatched: false, isPublic: false };
 }
 
 const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
-  const { isMatched, isPublic, userRoles, isPrivate } = matchCurrentUrl(
+  const { isMatched, isPublic, userRoles } = matchCurrentUrl(
     req.path,
     req.method
   );
@@ -50,8 +50,8 @@ const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
 
-  if (isMatched && isPrivate) {
-    middleware(req, res, next);
+  if (isMatched && !isPublic) {
+    middleware(req, res, next, userRoles);
 
     return;
   }
