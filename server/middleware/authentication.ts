@@ -40,7 +40,11 @@ function matchCurrentUrl(
   return { isMatched: false, isPublic: false };
 }
 
-const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
+const userAuthentication = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { isMatched, isPublic, userRoles } = matchCurrentUrl(
     req.path,
     req.method
@@ -59,4 +63,4 @@ const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
   res.sendStatus(401);
 };
 
-export default authenticateUser;
+export default userAuthentication;
