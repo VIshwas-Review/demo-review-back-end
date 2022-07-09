@@ -1,13 +1,13 @@
 import bcrypt from "bcryptjs";
-import {config } from 'dotenv';
+import { config } from "dotenv";
 import jwt from "jsonwebtoken";
-import type { Request, Response } from 'express'
+import type { Request, Response } from "express";
 
 import User from "../../models/user";
 
-config()
+config();
 
-const secret = process.env.JWT_SECRET as string
+const secret = process.env.JWT_SECRET as string;
 
 async function hashPassword(password: string) {
   return await bcrypt.hash(password, 10);
@@ -37,18 +37,22 @@ export const signIn = async (req: Request, res: Response) => {
       {
         email: existingUser.email,
         userId: existingUser._id,
-        role: existingUser.role
+        role: existingUser.role,
       },
       secret as string,
       { expiresIn: "1d" }
     );
 
-    await User.findByIdAndUpdate(existingUser._id, { accessToken });
-
+    const updatedUser = await User.findByIdAndUpdate(
+      existingUser._id,
+      {
+        accessToken: accessToken,
+      },
+      { new: true }
+    );
     res.status(200).json({
-      data: existingUser,
-      token: accessToken,
-      message: "Succesfully logedin",
+      data: { user: { ...updatedUser._doc } },
+      message: "Welcome back",
     });
   } catch (error) {
     console.log(error);
@@ -57,18 +61,21 @@ export const signIn = async (req: Request, res: Response) => {
 };
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, password, confirmPassword, imageUrl, firstName, lastName, role } =
-    req.body;
-  console.log(req.body);
+  const {
+    email,
+    password,
+    confirmPassword,
+    imageUrl,
+    firstName,
+    lastName,
+    role,
+  } = req.body;
   try {
     const existingUser = await User.findOne({ email });
-    debugger;
-    console.log(existingUser);
     if (existingUser)
       return res
         .status(400)
         .json({ message: "User already exists, please Login" });
-    console.log(password, confirmPassword);
     if (password !== confirmPassword)
       return res
         .status(400)
@@ -93,13 +100,11 @@ export const signUp = async (req: Request, res: Response) => {
       secret,
       { expiresIn: "1d" }
     );
-    console.log(newUser);
     newUser.accessToken = accessToken;
     await newUser.save();
 
     res.status(200).json({
-      data: newUser,
-      token: accessToken,
+      data: { user: { ...newUser, token: accessToken } },
       message: "Successfully created an account",
     });
   } catch (error) {

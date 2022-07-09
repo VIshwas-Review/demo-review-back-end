@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 
 import { auth as middleware } from "./auth";
-import { PRIVATE_ROUTES, PUBLIC_ROUTES } from "../config/constants";
+import { PRIVATE_ROUTES, PUBLIC_ROUTES } from "../config/routes";
 import type { RouteInfo, Method, UserRole } from "../types/api";
 
 function matchCurrentUrl(
@@ -60,7 +60,7 @@ const userAuthentication = (
     return;
   }
 
-  res.sendStatus(401);
+  res.status(403).send({ message: "Forbbiden" });
 };
 
 export default userAuthentication;
