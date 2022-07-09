@@ -22,7 +22,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   try {
     const existingUser = await User.findOne({ email })
-    if (!existingUser) return res.status(404).json({ message: 'Create account before signin' })
+    if (!existingUser) return res.status(404).json({ message: 'Create account before sign in' })
 
     const isValidPassword = await validatePassword(password, existingUser.password)
 

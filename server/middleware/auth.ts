@@ -1,9 +1,16 @@
 import jwt from 'jsonwebtoken'
 import type { Request, Response, NextFunction } from 'express'
 
-import type { UserRole } from '../types/api'
+import { USER_ROLES } from '../config/constants'
+import { verifyAccessToken } from '../lib/accessToken'
+import type { UserRole, RoleVerificationPayLoad } from '../types/api'
 
-export const auth = async (req: Request, res: Response, next: NextFunction, roles?: UserRole[]) => {
+export const authenticateRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  roles?: UserRole[]
+) => {
   try {
     const accessToken = req.headers.authorization?.split(' ')[1]
     if (!accessToken) {
@@ -17,6 +24,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction, role
       if (accessToken && isCustomAuth) {
         decodedData = jwt.verify(accessToken, process.env.JWT_SECRET as string)
         req.params.userId = decodedData?.userId
+
+        res.set('user', JSON.stringify(decodedData))
       } else {
         decodedData = jwt.decode(accessToken)
 
@@ -41,5 +50,31 @@ export const auth = async (req: Request, res: Response, next: NextFunction, role
     }
   } catch (error: any) {
     console.log(error.message)
+  }
+}
+
+export const verifySignUpRole = async (req: Request, res: Response, next: NextFunction) => {
+  const { email, accessToken, role } = req.body
+
+  if (role === USER_ROLES.ADMIN) {
+    try {
+      const accessPayload = verifyAccessToken<RoleVerificationPayLoad>(accessToken)
+
+      if (accessPayload && accessToken && email === accessPayload.requesterEmail) {
+        return next()
+      } else {
+        res.status(422)
+        res.statusMessage = 'Unprocessable Entity'
+        return res.send({
+          message: 'The Access Token is Invalid with the Email which you have given',
+        })
+      }
+    } catch (error: any) {
+      res.status(422)
+      res.statusMessage = 'Unprocessable Entity'
+      return res.send({ message: error.message })
+    }
+  } else {
+    next()
   }
 }

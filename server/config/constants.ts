@@ -7,8 +7,8 @@ export const USER_ROLES: { ADMIN: UserRole; USER: UserRole; OWNER: UserRole } = 
 }
 
 export const PUBLIC_ROUTES: RouteInfo[] = [
-  { url: '/user/signin' },
-  { url: '/user/signup' },
+  { url: '/user/sign-in' },
+  { url: '/user/sign-up' },
   { url: '/airlines', methods: ['GET'] },
 ]
 
@@ -22,5 +22,10 @@ export const PRIVATE_ROUTES: RouteInfo[] = [
   {
     url: '/airlines/:id/likeAirline',
     methods: ['PATCH'],
+  },
+  {
+    url: '/user/generate-admin-role-token',
+    methods: ['POST'],
+    userRoles: ['owner'],
   },
 ]

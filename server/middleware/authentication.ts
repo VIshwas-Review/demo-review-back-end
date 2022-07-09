@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 
-import { auth as middleware } from './auth'
+import { authenticateRequest } from './auth'
 import { PRIVATE_ROUTES, PUBLIC_ROUTES } from '../config/constants'
 import type { RouteInfo, Method, UserRole } from '../types/api'
 
@@ -42,7 +42,7 @@ const userAuthentication = (req: Request, res: Response, next: NextFunction) => 
   }
 
   if (isMatched && !isPublic) {
-    middleware(req, res, next, userRoles)
+    authenticateRequest(req, res, next, userRoles)
 
     return
   }

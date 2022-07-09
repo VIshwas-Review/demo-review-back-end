@@ -16,3 +16,11 @@ export type RouteInfo = {
   methods?: Method[]
   userRoles?: UserRole[]
 }
+
+export type RoleVerificationPayLoad = {
+  requesterEmail: string
+  isApproved: string
+  message: string
+  userId: string
+  approvedRole: UserRole
+}

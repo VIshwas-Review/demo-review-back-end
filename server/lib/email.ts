@@ -1,7 +1,7 @@
 import type { Response } from 'express'
 import type { SendMailOptions, SentMessageInfo } from 'nodemailer'
 
-import { MAIL_TRANSPORTER_EMAIL } from 'config/variables'
+import { MAIL_TRANSPORTER_EMAIL } from '../config/variables'
 import { MailTransporter } from '../config/mailTransporter'
 
 export const getMailOptions = (
@@ -39,13 +39,20 @@ export const getMailOptions = (
 export const sendEmail = (options: SendMailOptions, response: Response) => {
   const sendMessageHandler = (error: Error | null, info: SentMessageInfo) => {
     if (error) {
-      console.log(`There was some issue with the mail transporter ${JSON.stringify(error)}`)
+      console.log(
+        `There was some issue with the mail transporter ${JSON.stringify(
+          error
+        )}, with the Mail Options ${JSON.stringify(options)}`
+      )
       response.status(401)
       response.send(`There was some issue with the mail transporter ${JSON.stringify(error)}`)
     } else {
       console.log(`The Access token has been sent successfully`)
-      response.status(401)
-      response.send(`There was some issue with the mail transporter ${JSON.stringify(info)}`)
+      response.status(200)
+      response.send({
+        message: `Successfully Access Token has been sent to ${options.to}`,
+        mailInfo: JSON.stringify(info),
+      })
     }
   }
 
