@@ -1,42 +1,66 @@
 import type { Request, Response, NextFunction } from "express";
 
-import type {
-  MiddlewareCallBackFunction,
-  RouteInfo,
-  Method,
-} from "../types/api";
+import { auth as middleware } from "./auth";
+import { PRIVATE_ROUTES, PUBLIC_ROUTES } from "../config/constants";
+import type { RouteInfo, Method, UserRole } from "../types/api";
 
 function matchCurrentUrl(
-  routesToExlcude: RouteInfo[],
   urlPath: string,
   method: string
-): boolean {
-  const matchedUrl: RouteInfo | undefined = routesToExlcude.find(
-    (item) => item.url === urlPath
+): {
+  isMatched: boolean;
+  userRoles?: UserRole[];
+  isPublic: boolean;
+} {
+  const matchedPublicUrl: RouteInfo | undefined = PUBLIC_ROUTES.find(
+    ({ url, methods }) =>
+      methods
+        ? url === urlPath && methods.includes(method.toUpperCase() as Method)
+        : url === urlPath
   );
 
-  if (matchedUrl) {
-    return matchedUrl.methods
-      ? matchedUrl.methods.includes(method.toUpperCase() as Method)
-      : true;
+  if (matchedPublicUrl) {
+    return { isMatched: !!matchedPublicUrl, isPublic: true };
+  }
+  const matchedPrivateUrl: RouteInfo | undefined = PRIVATE_ROUTES.find(
+    ({ url, methods }) =>
+      methods
+        ? url === urlPath && methods.includes(method.toUpperCase() as Method)
+        : url === urlPath
+  );
+
+  if (matchedPrivateUrl) {
+    return {
+      isMatched: !!matchedPrivateUrl,
+      userRoles: matchedPrivateUrl.userRoles,
+      isPublic: false,
+    };
   }
 
-  return false;
+  return { isMatched: false, isPublic: false };
 }
 
-const authenticateUser =
-  (
-    routesToExlcude: RouteInfo[],
-    middleware: MiddlewareCallBackFunction
-  ): MiddlewareCallBackFunction =>
-  (req: Request, res: Response, next: NextFunction) => {
-    const isMatched = matchCurrentUrl(routesToExlcude, req.path, req.method);
+const userAuthentication = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { isMatched, isPublic, userRoles } = matchCurrentUrl(
+    req.path,
+    req.method
+  );
 
-    if (isMatched) {
-      return next();
-    }
+  if (isMatched && isPublic) {
+    return next();
+  }
 
-    middleware(req, res, next);
-  };
+  if (isMatched && !isPublic) {
+    middleware(req, res, next, userRoles);
 
-export default authenticateUser;
+    return;
+  }
+
+  res.sendStatus(401);
+};
+
+export default userAuthentication;
