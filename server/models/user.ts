@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
-import { USER_ROLES } from "../config/constants";
+import { USER_ROLES } from '../config/constants'
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema(
     accessToken: { type: String },
   },
   { timestamps: true }
-);
+)
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema)
 
-export default User;
+export default User
