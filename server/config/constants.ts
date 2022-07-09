@@ -1,7 +1,7 @@
 import type { UserRole, RouteInfo } from 'types/api'
 
-export const USER_ROLES: { ADMINE: UserRole; USER: UserRole; OWNER: UserRole } = {
-  ADMINE: 'admin',
+export const USER_ROLES: { ADMIN: UserRole; USER: UserRole; OWNER: UserRole } = {
+  ADMIN: 'admin',
   USER: 'user',
   OWNER: 'owner',
 }
