@@ -104,7 +104,7 @@ export const signUp = async (req: Request, res: Response) => {
     await newUser.save();
 
     res.status(200).json({
-      data: { user: { ...newUser, token: accessToken } },
+      data: { user: { ...newUser._doc } },
       message: "Successfully created an account",
     });
   } catch (error) {
