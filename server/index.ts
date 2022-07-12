@@ -7,6 +7,7 @@ import { PORT, DB_URL } from "./config/variables";
 import userAuthentication from "./middleware/authentication";
 import airlineRoutes from "./routes/airline";
 import userRoutes from "./routes/user";
+import productRoutes from "./routes/product";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(userAuthentication);
 app.use("/airlines", airlineRoutes);
 app.use("/user", userRoutes);
+app.use("/product", productRoutes);
 
 mongoose
   .connect(DB_URL)
